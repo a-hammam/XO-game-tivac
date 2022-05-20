@@ -195,8 +195,116 @@ void reset(void){
 	draw();
 
 }
-void theWinnerIs(void){
+
+void theWinnerIs(void){//check if there is a winner
+	
+	
+	
+	
+
+	/*
+		to win you should have x or o in
+	0,1,2 or 3,4,5 or 6,7,8 or
+	0,3,6 or 1,4,7 or 2,5,8 or
+	0,4,8 or 2,4,6
+	*/
+
+	//check if X win`
+	if((array[1] == x_id && array[2] == x_id && array[3] == x_id) ||
+		 (array[4] == x_id && array[5] == x_id && array[6] == x_id) ||
+		 (array[7] == x_id && array[8] == x_id && array[9] == x_id) ||
+
+		 (array[1] == x_id && array[4] == x_id && array[7] == x_id) ||
+		 (array[2] == x_id && array[5] == x_id && array[8] == x_id) ||
+		 (array[3] == x_id && array[6] == x_id && array[9] == x_id) ||
+
+	   (array[1] == x_id && array[5] == x_id && array[9] == x_id) ||
+		 (array[3] == x_id && array[5] == x_id && array[7] == x_id) 		){
+		 
+			//Delay();
+			 Timer2_Init(10000000);
+			 WaitForInterrupt();
+			 Nokia5110_ClearBuffer();
+			 Nokia5110_DisplayBuffer();
+			 Nokia5110_SetCursor(0,1);
+		   Nokia5110_OutString("winner is X");
+			 x_score++;
+			 Nokia5110_SetCursor(0,2);
+	Nokia5110_OutString("X:");
+	Nokia5110_SetCursor(1,2);
+	Nokia5110_OutUDec(x_score);
+	 
+	Nokia5110_SetCursor(0,3);
+	Nokia5110_OutString("O:");
+	Nokia5110_SetCursor(1,3);
+	Nokia5110_OutUDec(o_score);
+			 
+			 GPIO_PORTE_DATA_R |=(1<<0);
+			 //Delay();
+			  Timer2_Init(80000000);
+			 WaitForInterrupt();
+			 reset();
+		 }
+	//check if O win`
+	else if((array[1] == o_id && array[2] == o_id && array[3] == o_id) ||
+		 (array[4] == o_id && array[5] == o_id && array[6] == o_id) ||
+		 (array[7] == o_id && array[8] == o_id && array[9] == o_id) ||
+
+		 (array[1] == o_id && array[4] == o_id && array[7] == o_id) ||
+		 (array[2] == o_id && array[5] == o_id && array[8] == o_id) ||
+		 (array[3] == o_id && array[6] == o_id && array[9] == o_id) ||
+
+	   (array[1] == o_id && array[5] == o_id && array[9] == o_id) ||
+		 (array[3] == o_id && array[5] == o_id && array[7] == o_id) 		)
+{
+		 
+		//Delay();
+	 Timer2_Init(10000000);
+			 WaitForInterrupt();
+			  Nokia5110_ClearBuffer();
+	Nokia5110_DisplayBuffer();
+			 Nokia5110_SetCursor(0,1);
+			Nokia5110_OutString("winner is O");
+	o_score++;
+	Nokia5110_SetCursor(0,2);
+Nokia5110_OutString("X:");
+	Nokia5110_SetCursor(1,2);
+	Nokia5110_OutUDec(x_score);
+	 
+	Nokia5110_SetCursor(0,3);
+	Nokia5110_OutString("O:");
+	Nokia5110_SetCursor(1,3);
+	Nokia5110_OutUDec(o_score);
+	
+	 GPIO_PORTE_DATA_R |=(1<<0);
+	
+	//Delay();
+	 Timer2_Init(80000000);
+	 WaitForInterrupt();
+			 reset();
 }
+else if(moves==9){
+ Nokia5110_ClearBuffer();
+	Nokia5110_DisplayBuffer();
+			 Nokia5110_SetCursor(3,1);
+			Nokia5110_OutString("DRAW");
+	Nokia5110_SetCursor(0,2);
+Nokia5110_OutString("X:");
+	Nokia5110_SetCursor(1,2);
+	Nokia5110_OutUDec(x_score);
+	 
+	Nokia5110_SetCursor(0,3);
+	Nokia5110_OutString("O:");
+	Nokia5110_SetCursor(1,3);
+	Nokia5110_OutUDec(o_score);
+	GPIO_PORTE_DATA_R |=(1<<0);
+	//Delay();
+	Timer2_Init(80000000);
+	 WaitForInterrupt();
+	reset();
+}
+}
+
 
 int main(void){
  
@@ -220,4 +328,26 @@ void Delay(void){unsigned long volatile time;
   }
 }
 
-
+void Timer2_Init(unsigned long period){ 
+  unsigned long volatile delay;
+  SYSCTL_RCGCTIMER_R |= 0x04;   // 0) activate timer2
+  delay = SYSCTL_RCGCTIMER_R;
+  
+  TIMER2_CTL_R = 0x00000000;    // 1) disable timer2A during setup
+  TIMER2_CFG_R = 0x00000000;    // 2) configure for 32-bit mode
+  TIMER2_TAMR_R = 0x00000002;   // 3) configure for periodic mode, default down-count settings
+  TIMER2_TAILR_R = period-1;    // 4) reload value
+  TIMER2_TAPR_R = 0;            // 5) bus clock resolution
+  TIMER2_ICR_R = 0x00000001;    // 6) clear timer2A timeout flag
+  TIMER2_IMR_R = 0x00000001;    // 7) arm timeout interrupt
+  NVIC_PRI5_R = (NVIC_PRI5_R&0x00FFFFFF)|0x80000000; // 8) priority 4
+// interrupts enabled in the main program after all devices initialized
+// vector number 39, interrupt number 23
+  NVIC_EN0_R = 1<<23;           // 9) enable IRQ 23 in NVIC
+  TIMER2_CTL_R = 0x00000001;    // 10) enable timer2A
+}
+void Timer2A_Handler(void){ 
+	
+  TIMER2_ICR_R = 0x00000001;   // acknowledge timer2A timeout
+  
+}
