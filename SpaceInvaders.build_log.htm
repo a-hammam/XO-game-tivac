@@ -11,41 +11,45 @@ Rebuild target 'SpaceInvaders'
 assembling startup.s...
 assembling random.s...
 compiling SpaceInvaders.c...
+SpaceInvaders.c(383): warning:  #1-D: last line of file ends without a newline
+  }
+SpaceInvaders.c: 1 warning, 0 errors
 compiling TExaS.c...
 compiling VirtualNokia5110.c...
 linking...
 Program Size: Code=5828 RO-data=872 RW-data=108 ZI-data=1684  
-".\SpaceInvaders.axf" - 0 Error(s), 0 Warning(s).
+".\SpaceInvaders.axf" - 0 Error(s), 1 Warning(s).
 </pre>
 </body>
 </html>
-licitly
-         Timer2_Init(10000000);
-SpaceInvaders.c(307): warning:  #223-D: function "Timer2_Init" declared implicitly
-        Timer2_Init(80000000);
-SpaceInvaders.c(336): error:  #159: declaration is incompatible with previous "Timer2_Init" (declared at line 230)
-  void Timer2_Init(unsigned long period){ 
-SpaceInvaders.c: 3 warnings, 1 error
-compiling TExaS.c...
-compiling VirtualNokia5110.c...
-".\SpaceInvaders.axf" - 1 Error(s), 3 Warning(s).
-Target not created
-_Init" declared implicitly
-         Timer2_Init(10000000);
-SpaceInvaders.c(269): error:  #20: identifier "o_score" is undefined
-        o_score++;
-SpaceInvaders.c(273): error:  #20: identifier "x_score" is undefined
-        Nokia5110_OutUDec(x_score);
-SpaceInvaders.c(295): error:  #20: identifier "x_score" is undefined
-        Nokia5110_OutUDec(x_score);
-SpaceInvaders.c(300): error:  #20: identifier "o_score" is undefined
+  #20: identifier "j" is undefined
+  for(j = 0 ;j < 5 ;j+=2){
+SpaceInvaders.c(213): error:  #20: identifier "x_id" is undefined
+        if((array[1] == x_id && array[2] == x_id && array[3] == x_id) ||
+SpaceInvaders.c(225): warning:  #223-D: function "Timer2_Init" declared implicitly
+                         Timer2_Init(10000000);
+SpaceInvaders.c(231): error:  #20: identifier "x_score" is undefined
+                         x_score++;
+SpaceInvaders.c(240): error:  #20: identifier "o_score" is undefined
         Nokia5110_OutUDec(o_score);
-SpaceInvaders.c(303): warning:  #223-D: function "Timer2_Init" declared implicitly
+SpaceInvaders.c(249): error:  #20: identifier "o_id" is undefined
+        else if((array[1] == o_id && array[2] == o_id && array[3] == o_id) ||
+SpaceInvaders.c(262): warning:  #223-D: function "Timer2_Init" declared implicitly
+         Timer2_Init(10000000);
+SpaceInvaders.c(268): error:  #20: identifier "o_score" is undefined
+        o_score++;
+SpaceInvaders.c(272): error:  #20: identifier "x_score" is undefined
+        Nokia5110_OutUDec(x_score);
+SpaceInvaders.c(294): error:  #20: identifier "x_score" is undefined
+        Nokia5110_OutUDec(x_score);
+SpaceInvaders.c(299): error:  #20: identifier "o_score" is undefined
+        Nokia5110_OutUDec(o_score);
+SpaceInvaders.c(302): warning:  #223-D: function "Timer2_Init" declared implicitly
         Timer2_Init(80000000);
-SpaceInvaders.c(332): error:  #159: declaration is incompatible with previous "Timer2_Init" (declared at line 226)
+SpaceInvaders.c(330): error:  #159: declaration is incompatible with previous "Timer2_Init" (declared at line 225)
   void Timer2_Init(unsigned long period){ 
-SpaceInvaders.c: 3 warnings, 9 errors
+SpaceInvaders.c: 3 warnings, 13 errors
 compiling TExaS.c...
 compiling VirtualNokia5110.c...
-".\SpaceInvaders.axf" - 9 Error(s), 3 Warning(s).
+".\SpaceInvaders.axf" - 13 Error(s), 3 Warning(s).
 Target not created
