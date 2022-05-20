@@ -312,7 +312,6 @@ int main(void){
   Random_Init(1);
  	PortE_Init(); 
 	portF_Init();
-	EdgeCounter_Init();
 EnableInterrupts();
   while(1){
 		WaitForInterrupt();
