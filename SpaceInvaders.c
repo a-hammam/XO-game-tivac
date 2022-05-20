@@ -43,6 +43,28 @@ NVIC_EN0_R =(1<<4);          //ENABLE INTERRUPT 4
 EnableInterrupts();
 	 
 }
+void EdgeCounter_Init(void){                          
+                        
+  SYSCTL_RCGC2_R |= 0x00000020;  //activate clock for port F
+  delay = 0;
+  GPIO_PORTF_LOCK_R=0x4C4F434B;  //Unlock portF
+  GPIO_PORTF_CR_R=0x1F;      			//allow changes to PF0-4      
+  GPIO_PORTF_DIR_R &= ~0x0E;     //PF4-0 INPUT, PF1-2-3 OUTPUT
+  GPIO_PORTF_AFSEL_R &= ~0x11;   //disable alt funct on PF4-0
+  GPIO_PORTF_DEN_R |= 0x11;      //enable digital I/O on PF4-0
+  GPIO_PORTF_PCTL_R &= ~0x00000000; //GPIO clear bit
+  GPIO_PORTF_AMSEL_R = 0;    			//Disable analog functions 
+  GPIO_PORTF_PUR_R |= 0x11;       //enable pull-up resistors on PF0-4
+  GPIO_PORTF_IS_R &= ~0x11;   	  //PF4-0 is edge sensitive
+  GPIO_PORTF_IBE_R &= ~0x11;    	//PF0-4 is single edge
+  GPIO_PORTF_IEV_R &= ~0x11;      //PF4-0 is raising Edges
+  GPIO_PORTF_ICR_R = 0x11;      	//clear flags 0 and 4
+  GPIO_PORTF_IM_R |= 0x11;     	  //arm interrupt on PF0 and PF4
+  NVIC_PRI7_R = (NVIC_PRI7_R&0xFF00FFFF)|0x00A00000; //priority 5
+  NVIC_EN0_R = 0x40000000;     		//EnableInterrupts interrupt 30 on NVIC
+  EnableInterrupts();          
+
+}
 
 void GPIOPortE_Handler (void){
 	if(GPIO_PORTE_RIS_R &(1<<1)){
@@ -66,6 +88,23 @@ void GPIOPortE_Handler (void){
 	}
 
 }
+void GPIOPortF_Handler(void)
+	{
+	 if(GPIO_PORTF_RIS_R &(1<<0)){
+		 GPIO_PORTF_ICR_R = 0x01;
+		cursor++;
+		while(array[cursor]!=' '){
+			
+			cursor++;
+		if(cursor>9) cursor=1;
+		}
+		draw();
+		
+		
+	}
+		
+	}
+
 
 void draw(void){
 		
