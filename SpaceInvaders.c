@@ -2,24 +2,28 @@
 #include "Nokia5110.h"
 #include "Random.h"
 #include "TExaS.h"
-
-void DisableInterrupts(void); // Disable interrupts
-void EnableInterrupts(void);  // Enable interrupts
-void WaitForInterrupt(void);
-void PortE_Init(void);        
-void PortF_Init(void);
-void EdgeCounter_Init(void); 
 void draw(void);
 void reset(void);
-void theWinnerIs(void);
-void Delay(void);
+void DisableInterrupts(void); // Disable interrupts
+void EnableInterrupts(void);  // Enable interrupts
+void Timer2_Init(unsigned long period);
+void PortE_Init(void);        
+void PortF_Init(void);
 int moves=0;
+void theWinnerIs(void);
 int delay;
 void Delay(void);
-volatile int cursor=1;
+	volatile int cursor=1;
 char array[10]={'a',' ',' ',' ',' ',' ',' ',' ',' ',' '};
-char turn = 'X';
 
+void Delay(void);
+void WaitForInterrupt(void);
+int i =0,j=0,indx = 1 , current_cursor = 1;
+char turn = 'X';
+char x_id='X';
+char o_id='O';
+int x_score=0;
+int o_score=0;
 
 
 void PortE_Init(void){
@@ -43,65 +47,72 @@ NVIC_EN0_R =(1<<4);          //ENABLE INTERRUPT 4
 EnableInterrupts();
 	 
 }
-void EdgeCounter_Init(void){                          
+
+void portF_Init (void){                          
                         
-  SYSCTL_RCGC2_R |= 0x00000020;  //activate clock for port F
+  SYSCTL_RCGC2_R |= 0x00000020; 
   delay = 0;
-  GPIO_PORTF_LOCK_R=0x4C4F434B;  //Unlock portF
-  GPIO_PORTF_CR_R=0x1F;      			//allow changes to PF0-4      
-  GPIO_PORTF_DIR_R &= ~0x0E;     //PF4-0 INPUT, PF1-2-3 OUTPUT
-  GPIO_PORTF_AFSEL_R &= ~0x11;   //disable alt funct on PF4-0
-  GPIO_PORTF_DEN_R |= 0x11;      //enable digital I/O on PF4-0
-  GPIO_PORTF_PCTL_R &= ~0x00000000; //GPIO clear bit
-  GPIO_PORTF_AMSEL_R = 0;    			//Disable analog functions 
-  GPIO_PORTF_PUR_R |= 0x11;       //enable pull-up resistors on PF0-4
-  GPIO_PORTF_IS_R &= ~0x11;   	  //PF4-0 is edge sensitive
-  GPIO_PORTF_IBE_R &= ~0x11;    	//PF0-4 is single edge
-  GPIO_PORTF_IEV_R &= ~0x11;      //PF4-0 is raising Edges
-  GPIO_PORTF_ICR_R = 0x11;      	//clear flags 0 and 4
-  GPIO_PORTF_IM_R |= 0x11;     	  //arm interrupt on PF0 and PF4
-  NVIC_PRI7_R = (NVIC_PRI7_R&0xFF00FFFF)|0x00A00000; //priority 5
-  NVIC_EN0_R = 0x40000000;     		//EnableInterrupts interrupt 30 on NVIC
+  GPIO_PORTF_LOCK_R=0x4C4F434B; 
+  GPIO_PORTF_CR_R=0x1F;            
+  GPIO_PORTF_DIR_R &= ~0x0E;    
+  GPIO_PORTF_AFSEL_R &= ~0x11;  
+  GPIO_PORTF_DEN_R |= 0x11;     
+  GPIO_PORTF_PCTL_R &= ~0x00000000; 
+  GPIO_PORTF_AMSEL_R = 0;     
+  GPIO_PORTF_PUR_R |= 0x11;    
+  GPIO_PORTF_IS_R &= ~0x11;   
+  GPIO_PORTF_IBE_R &= ~0x11;    
+  GPIO_PORTF_IEV_R &= ~0x11;    
+  GPIO_PORTF_ICR_R = 0x11;      
+  GPIO_PORTF_IM_R |= 0x11;     
+  NVIC_PRI7_R = (NVIC_PRI7_R&0xFF00FFFF)|0x00A00000; 
+  NVIC_EN0_R = 0x40000000;      
   EnableInterrupts();          
 
 }
 
-void GPIOPortE_Handler (void){
-	if(GPIO_PORTE_RIS_R &(1<<1)){
-		GPIO_PORTE_ICR_R =(1<<1); 
-		if(array[cursor]==' '){
-			if (turn =='X'){
-				array[cursor]='X';
-				turn='O';
-			}
-			else{ 
-			array[cursor]='O';
-		  turn='X';
-		
-			}
-			draw();
-			moves++;
-		
-		  theWinnerIs();
-		
-		}
-	}
-
-}
+/*
 void portF_Init(void)
 {
 	volatile unsigned long delay;
-	SYSCTL_RCGC2_R |=0x00000020;	// activate clock for port F
-	delay=SYSCTL_RCGC2_R;					//delay
-	GPIO_PORTF_LOCK_R=0x4C4F434B;	//Unloock portF
-	GPIO_PORTF_CR_R=0x1F;					//Allow changes to PF0-4
-	GPIO_PORTF_AMSEL_R=0x00;			//disable analog function
-	GPIO_PORTF_PCTL_R=0x00000000;	//GPIO clear bit PCTL
-	GPIO_PORTF_DIR_R=0x0E;				//PF4,PF0 input, PF3,PF2,PF1 output 			
-	GPIO_PORTF_AFSEL_R=0x00;			//no alternate function
-	GPIO_PORTF_PUR_R=0x11;				//enable pullup resistors on PF4,PF0
-	GPIO_PORTF_DEN_R=0x1F;				//enable digital pins PF4-PF0 
+	SYSCTL_RCGC2_R |=0x00000020;
+	delay=SYSCTL_RCGC2_R;
+	GPIO_PORTF_LOCK_R=0x4C4F434B;
+	GPIO_PORTF_CR_R=0x1F;
+	GPIO_PORTF_AMSEL_R=0x00;
+	GPIO_PORTF_PCTL_R=0x00000000;
+	GPIO_PORTF_DIR_R=0x0E;
+	GPIO_PORTF_AFSEL_R=0x00;
+	GPIO_PORTF_PUR_R=0x11;
+	GPIO_PORTF_DEN_R=0x1F;
 }
+*/
+
+void GPIOPortE_Handler (void){
+	
+	if(GPIO_PORTE_RIS_R &(1<<1)){
+		GPIO_PORTE_ICR_R =(1<<1); 
+		if(array[cursor]==' '){
+		if (turn =='X'){
+			array[cursor]='X';
+			turn='O';
+		}
+		else{ 
+			array[cursor]='O';
+		  turn='X';
+		
+		}
+			 draw();
+		moves++;
+		
+		theWinnerIs();
+		
+	}
+}
+
+}
+
+
 void GPIOPortF_Handler(void)
 	{
 	if (GPIO_PORTF_RIS_R &(1<<4))  
@@ -131,10 +142,11 @@ void GPIOPortF_Handler(void)
 	}
 		
 	}
-
+	
+	
 
 void draw(void){
-		
+	
 	 Nokia5110_ClearBuffer();
 	Nokia5110_DisplayBuffer();
 	current_cursor=1,indx=1;
@@ -173,11 +185,24 @@ for(j = 0 ;j < 5 ;j+=2){
 		}
 }
 
-// Display Trun
-	Nokia5110_SetCursor(8,0);
-	Nokia5110_OutString("Turn");
-	Nokia5110_SetCursor(9,1);
-	Nokia5110_OutChar(turn);
+// 	Display Trun
+			Nokia5110_SetCursor(8,0);
+			Nokia5110_OutString("Turn");
+			Nokia5110_SetCursor(9,1);
+			Nokia5110_OutChar(turn);
+/*
+// Display Scores
+			Nokia5110_SetCursor(8,2);
+			Nokia5110_OutString("X:");
+			Nokia5110_SetCursor(8,6);
+			Nokia5110_OutUDec(x_score);
+
+			Nokia5110_SetCursor(10,2);
+			Nokia5110_OutString("O");
+		//	Nokia5110_SetCursor(10,4);
+//Nokia5110_OutUDec(o_score);
+*/
+
 
 }
 
@@ -195,6 +220,7 @@ void reset(void){
 	draw();
 
 }
+
 
 void theWinnerIs(void){//check if there is a winner
 	
@@ -306,13 +332,17 @@ Nokia5110_OutString("X:");
 }
 
 
+
+
 int main(void){
  
   TExaS_Init(NoLCD_NoScope);  // set system clock to 80 MHz
+  //EdgeCounter_Init();           // initialize GPIO Port F interrupt
+	portF_Init();
   Random_Init(1);
  	PortE_Init(); 
-	portF_Init();
-	EdgeCounter_Init();
+	Nokia5110_Init();
+ draw();
 EnableInterrupts();
   while(1){
 		WaitForInterrupt();

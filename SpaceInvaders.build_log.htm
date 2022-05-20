@@ -7,6 +7,45 @@ D:\collage\Test\Project\XO-game-tivac\SpaceInvaders.uvproj
 Project File Date:  05/20/2022
 
 <h2>Output:</h2>
+Rebuild target 'SpaceInvaders'
+assembling startup.s...
+assembling random.s...
+compiling SpaceInvaders.c...
+compiling TExaS.c...
+compiling VirtualNokia5110.c...
+linking...
+Program Size: Code=5828 RO-data=872 RW-data=108 ZI-data=1684  
+".\SpaceInvaders.axf" - 0 Error(s), 0 Warning(s).
 </pre>
 </body>
 </html>
+licitly
+         Timer2_Init(10000000);
+SpaceInvaders.c(307): warning:  #223-D: function "Timer2_Init" declared implicitly
+        Timer2_Init(80000000);
+SpaceInvaders.c(336): error:  #159: declaration is incompatible with previous "Timer2_Init" (declared at line 230)
+  void Timer2_Init(unsigned long period){ 
+SpaceInvaders.c: 3 warnings, 1 error
+compiling TExaS.c...
+compiling VirtualNokia5110.c...
+".\SpaceInvaders.axf" - 1 Error(s), 3 Warning(s).
+Target not created
+_Init" declared implicitly
+         Timer2_Init(10000000);
+SpaceInvaders.c(269): error:  #20: identifier "o_score" is undefined
+        o_score++;
+SpaceInvaders.c(273): error:  #20: identifier "x_score" is undefined
+        Nokia5110_OutUDec(x_score);
+SpaceInvaders.c(295): error:  #20: identifier "x_score" is undefined
+        Nokia5110_OutUDec(x_score);
+SpaceInvaders.c(300): error:  #20: identifier "o_score" is undefined
+        Nokia5110_OutUDec(o_score);
+SpaceInvaders.c(303): warning:  #223-D: function "Timer2_Init" declared implicitly
+        Timer2_Init(80000000);
+SpaceInvaders.c(332): error:  #159: declaration is incompatible with previous "Timer2_Init" (declared at line 226)
+  void Timer2_Init(unsigned long period){ 
+SpaceInvaders.c: 3 warnings, 9 errors
+compiling TExaS.c...
+compiling VirtualNokia5110.c...
+".\SpaceInvaders.axf" - 9 Error(s), 3 Warning(s).
+Target not created
