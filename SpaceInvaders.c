@@ -115,6 +115,20 @@ for(j = 0 ;j < 5 ;j+=2){
 
 }
 
+void reset(void){
+	int i;
+	array[0]='a';
+	for(i=1;i<10;i++){
+		array[i]=' ';
+		
+	}
+	turn='X';
+	moves=0;
+	cursor=1;
+	GPIO_PORTE_DATA_R &=~ (1<<0);
+	draw();
+
+}
 void theWinnerIs(void){
 }
 
