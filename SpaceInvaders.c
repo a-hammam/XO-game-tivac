@@ -68,6 +68,51 @@ void GPIOPortE_Handler (void){
 }
 
 void draw(void){
+		
+	 Nokia5110_ClearBuffer();
+	Nokia5110_DisplayBuffer();
+	current_cursor=1,indx=1;
+	// Horizontal borders
+for(i = 0 ;i < 8 ;i++){
+		Nokia5110_SetCursor(i, 1);
+		Nokia5110_OutString("-");
+		Nokia5110_SetCursor(i, 3);
+		Nokia5110_OutString("-");
+	}
+
+// Vertical borders
+for(j = 0 ;j < 5 ;j+=2){
+	Nokia5110_SetCursor(2, j);
+	Nokia5110_OutString("|");
+	Nokia5110_SetCursor(5, j);
+	Nokia5110_OutString("|");	
+	}
+
+// arrayay values
+ for(i = 0 ;i < 5;i+=2) {
+	for(j = 0 ;j < 8 ;j+=3){
+			Nokia5110_SetCursor(j, i);
+			Nokia5110_OutChar(array[indx++]);
+	}
+}
+ 
+// Displaying cursor
+ for(i = 0 ;i < 5;i+=2) {
+	for(j = 1 ;j < 8 ;j+=3){
+		if(current_cursor == cursor){
+			Nokia5110_SetCursor(j, i);
+			Nokia5110_OutChar('.');
+		}
+		current_cursor++;
+		}
+}
+
+// Display Trun
+	Nokia5110_SetCursor(8,0);
+	Nokia5110_OutString("Turn");
+	Nokia5110_SetCursor(9,1);
+	Nokia5110_OutChar(turn);
+
 }
 
 void theWinnerIs(void){
